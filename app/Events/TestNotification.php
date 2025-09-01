@@ -43,7 +43,6 @@ class TestNotification implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        // Make sure task is top-level
         return [
             'title' => $this->title,
             'body' => $this->body,

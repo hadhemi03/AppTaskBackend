@@ -28,7 +28,6 @@ class SendTaskNotifications extends Command
                 continue;
             }
 
-            // scheduledAt: one day before the due date at 09:00
             $scheduledAt = Carbon::parse($task->due_date)->subDay()->setTime(9, 0, 0);
 
             // skip if we already created a notification for this user+task on that scheduled day
