@@ -1,0 +1,220 @@
+openapi: 3.0.3
+info:
+  title: APP
+  version: 1.0.0
+  description: ''
+paths:
+  /api/login:
+    post:
+      summary: Login API
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: OK
+      operationId: post-api-login
+      description: ''
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  x-stoplight:
+                    id: 6xp6fqod2xx5j
+                  example: user9@gmail.com
+                password:
+                  type: string
+                  x-stoplight:
+                    id: 5thy0s7usvfyv
+                  example: user9123*
+              required:
+                - email
+                - password
+            examples:
+              Example:
+                value:
+                  email: user9@gmail.com
+                  password: user9123*
+              Example 1:
+                value:
+                  email: string
+                  password: string
+        description: ''
+  /api/logout:
+    post:
+      summary: Logout API
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: post-api-logout
+      description: ''
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+            examples:
+              Example:
+                value:
+                  email: user9@gmail.com
+                  password: user9123*
+              Example 1:
+                value:
+                  email: string
+                  password: string
+        description: ''
+    parameters: []
+  /api/update:
+    parameters: []
+    put:
+      summary: Update User
+      operationId: put-api-update
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      tags:
+        - Users
+  /api/register:
+    post:
+      summary: Register API
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: OK
+      operationId: post-api-register
+      description: ''
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  x-stoplight:
+                    id: 5thy0s7usvfyv
+                email:
+                  type: string
+                  x-stoplight:
+                    id: tmzhmcm7vgut1
+                password:
+                  type: string
+                  x-stoplight:
+                    id: 6xp6fqod2xx5j
+                profile_picture:
+                  type: string
+                  x-stoplight:
+                    id: u88qr1libo3zr
+              required:
+                - name
+                - email
+                - password
+                - profile_picture
+    parameters: []
+  /api/user:
+    get:
+      summary: Get User
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: get-api-user
+      parameters: []
+      description: ''
+      security:
+        - bearer: []
+  /api/tasks:
+    get:
+      summary: Get Task
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: get-api-task
+      parameters: []
+      description: ''
+      security:
+        - bearer: []
+      tags:
+        - Tasks
+    parameters: []
+  /api/tasks/starred:
+    get:
+      summary: Get Task Starred
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: get-api-starredtask
+      parameters: []
+      description: ''
+      security:
+        - bearer: []
+      tags:
+        - Tasks
+    parameters: []
+  /api/addtask:
+    parameters: []
+    post:
+      summary: Add Task
+      operationId: post-api-addtask
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      tags:
+        - Tasks
+  /api/tasks/due-today:
+    get:
+      summary: Get Today Task
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: get-api-tasktoday
+      parameters: []
+      description: ''
+      security:
+        - bearer: []
+      tags:
+        - Tasks
+    parameters: []
+  /api/tasks/due-this-week:
+    get:
+      summary: Get Week Task
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: get-api-taskweek
+      parameters: []
+      description: ''
+      security:
+        - bearer: []
+      tags:
+        - Tasks
+    parameters: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
