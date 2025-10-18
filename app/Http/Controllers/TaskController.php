@@ -56,6 +56,8 @@ class TaskController extends Controller
             'starred' => 'boolean'
         ]);
 
+        
+
         // creates a new task for the current user
         $task = $request->user()->tasks()->create($validated);
 
