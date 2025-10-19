@@ -37,67 +37,81 @@ class TaskController extends Controller
     }
 
     // Create a new task
-    public function store(Request $request)
-    {
+public function store(Request $request)
+{
+    // Base validation rules
+    $rules = [
+        'title' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('tasks')->where(
+                fn($query) =>
+                $query->where('user_id', $request->user()->id)
+            ),
+        ],
+        'description' => 'required|string',
+        'status' => 'required|in:new,to do,in progress,pending,done',
+        'due_date' => 'required|date_format:Y-m-d H:i',
+        'starred' => 'boolean'
+    ];
 
-        $validated = $request->validate([
-            'title' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('tasks')->where(
-                    fn($query) =>
-                    $query->where('user_id', $request->user()->id)
-                ),
-            ],   //unique in the tasks table for the currently authenticated user
-            'description' => 'required|string',
-            'status' => 'required|in:new,to do,in progress,pending,done',
-            'due_date' => 'required|date_format:Y-m-d H:i',
-            'starred' => 'boolean'
+    // If admin, allow assigning to a user
+    if ($request->user()->role === 'admin') {
+        $rules['user_id'] = 'required|exists:users,id';
+    }
+
+    $validated = $request->validate($rules);
+
+    // Choose the assigned user
+    $assignedUserId = $request->user()->role === 'admin'
+        ? $validated['user_id']
+        : $request->user()->id;
+
+    // Create the task for that user
+    $task = Task::create([
+        'user_id' => $assignedUserId,
+        'title' => $validated['title'],
+        'description' => $validated['description'],
+        'status' => $validated['status'],
+        'due_date' => $validated['due_date'],
+        'starred' => $validated['starred'] ?? false,
+    ]);
+
+    // Notify all admins
+    $admins = User::where('role', 'admin')->get();
+
+    foreach ($admins as $admin) {
+        $message = [
+            'title' => 'New Task Added',
+            'body' => "{$request->user()->name} added a new task: '{$task->title}'",
+            'task' => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'description' => $task->description,
+                'status' => $task->status,
+                'starred' => $task->starred,
+                'due_date' => $task->due_date,
+                'created_by' => $request->user()->name,
+            ],
+            'task_id' => $task->id,
+        ];
+
+        UserNotification::create([
+            'user_id' => $admin->id,
+            'task_id' => $task->id,
+            'title' => $message['title'],
+            'body' => $message['body'],
+            'data' => json_encode(['task' => $message['task']]),
+            'sent_at' => now(),
         ]);
 
-        
-
-        // creates a new task for the current user
-        $task = $request->user()->tasks()->create($validated);
-
-        $admins = User::where('role', 'admin')->get();
-
-        foreach ($admins as $admin) {
-            $message = [
-                'title' => 'New Task Added',
-                'body' => "{$request->user()->name} added a new task: '{$task->title}'",
-                'task' => [
-                    'id' => $task->id,
-                    'title' => $task->title,
-                    'description' => $task->description,
-                    'status' => $task->status,
-                    'starred' => $task->starred,
-                    'due_date' => $task->due_date,
-                    'created_by' => $request->user()->name,
-                ],
-                'task_id' => $task->id,
-            ];
-
-
-            // store in DB
-            UserNotification::create([
-                'user_id' => $admin->id,
-                'task_id' => $task->id,
-                'title' => $message['title'],
-                'body' => $message['body'],
-                'data' => json_encode(['task' => $message['task']]), // optional
-                'sent_at' => now(),
-            ]);
-
-
-            // broadcast real-time
-            event(new TestNotification($message, $admin->id));
-        }
-
-
-        return response()->json($task, 201);  // 201 : created ( resource made )
+        event(new TestNotification($message, $admin->id));
     }
+
+    return response()->json($task, 201);
+}
+
 
     // Show a task
     public function show(Task $task, Request $request)

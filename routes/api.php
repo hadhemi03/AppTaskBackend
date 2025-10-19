@@ -3,6 +3,7 @@
 use App\Events\TestNotification;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 use App\Models\Task;
 use App\Models\UserNotification;
 use Illuminate\Http\Request;
@@ -33,6 +34,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', fn(Request $request) => $request->user());
     Route::put('/update', [AuthController::class, 'update']);
+
+
+    Route::get('/users', [UserController::class, 'index']);
 
     // Task CRUD
     Route::get('/tasks', [TaskController::class, 'index']);
