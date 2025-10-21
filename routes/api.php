@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/gettask/{task}', [TaskController::class, 'show']);
     Route::put('/updatetask/{task}', [TaskController::class, 'update']);
     Route::delete('/deletetask/{task}', [TaskController::class, 'destroy']);
+    Route::get('/my-tasks', [TaskController::class, 'myTasks']);
+
     
     // Task filters & features
     Route::get('/tasks/due-today', [TaskController::class, 'dueToday']);
