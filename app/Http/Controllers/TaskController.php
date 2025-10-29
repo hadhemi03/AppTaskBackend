@@ -268,4 +268,32 @@ class TaskController extends Controller
         return response()->json($tasks);
     }
 
+    public function getTasksByUser(Request $request, $userId)
+    {
+        // Only admins can access this
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        // Fetch tasks belonging to the selected user
+        $tasks = Task::with('user')
+            ->where('user_id', $userId)
+            ->get()
+            ->map(function ($task) {
+                return [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'description' => $task->description,
+                    'status' => $task->status,
+                    'due_date' => $task->due_date,
+                    'starred' => $task->starred,
+                    'created_by' => $task->user->name,
+                ];
+            });
+
+        return response()->json($tasks);
+    }
+
+
+
 }

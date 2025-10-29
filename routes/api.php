@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updatetask/{task}', [TaskController::class, 'update']);
     Route::delete('/deletetask/{task}', [TaskController::class, 'destroy']);
     Route::get('/my-tasks', [TaskController::class, 'myTasks']);
+    Route::get('/tasks/user/{userId}', [TaskController::class, 'getTasksByUser']);
+
 
     
     // Task filters & features
