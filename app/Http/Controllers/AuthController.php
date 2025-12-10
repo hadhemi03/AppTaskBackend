@@ -62,7 +62,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'profile_picture' => $user->profile_picture,
+                'profile_picture' => asset($user->profile_picture),
                 'role' => $user->role
 
             ],
